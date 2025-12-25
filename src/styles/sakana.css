@@ -1,0 +1,15 @@
+/* 覆盖sakana.css中的错误规则 */
+html.sakana-box {
+  position: static !important; /* 取消fixed定位 */
+  left: auto !important;
+  top: auto !important;
+}
+
+/* 为我们的div元素设置正确样式 */
+.sakana-box {
+  position: fixed !important;
+  top: -45px !important;
+  left: 200px !important;
+  z-index: 9999 !important;
+  transform-origin: 0 0 !important;
+}

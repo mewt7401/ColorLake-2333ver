@@ -1,0 +1,160 @@
+:root {
+  /* 完全保留原始核心设置 */
+  font-family: 'Segoe UI', Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #f5f5f5;          /* 原始文字色 */
+  background-color: #0c0d0f;/* 原始背景色 - 保持不变 */
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: dark;
+
+  
+  /* 安全的主色优化 - 在深色背景下更清晰 */
+  --primary-color: #6c88ff;      /* 从#4a6cf7提升亮度30% */
+  --primary-glow: rgba(108, 136, 255, 0.25); /* 按钮悬停光晕 */
+  
+ 
+  /* 保留实用变量 */
+  --border-radius: 12px;
+  --transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0c0d0f; /* 明确设置背景 */
+  min-height: 100vh;
+  padding: 1rem;
+  padding-bottom:70px;
+  overflow-x: hidden; /* 防止水平滚动 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card {
+  background: var(--surface-primary);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  margin: 1rem;
+  transition: var(--transition);
+  width: 100%;
+  max-width: 800px;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--elevation-shadow);
+  background: var(--surface-secondary);
+}
+
+button {
+  font: inherit;
+}
+
+button {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 0 2px 6px var(--primary-glow);
+}
+
+button:hover {
+  background: #5a77ff; /* 比主色暗10% */
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px var(--primary-glow);
+}
+
+.divider {
+  height: 1px;
+  background: var(--divider);
+  margin: 1.5rem 0;
+}
+
+@media (min-height: 800px) {
+  #root {
+    min-height: 60vh; /* 大屏幕才启用 */
+  }
+}
+
+/* 3. 保护底部文件名 */
+.footer-filename {
+  position: fixed;
+  bottom: 0px; /* 距离底部10px */
+  left: 15px;
+  right: 15px;
+  background: rgba(12, 13, 15, 0.92); /* 半透背景 */
+  padding: 6px 12px;
+  border-radius: 6px;
+  z-index: 1000; /* 确保在最上层 */
+  font-size: 0.9rem;
+}
+
+/* 4. 缩小 LUT 预览图 */
+.lut-preview {
+  max-width: 160px; /* 限制最大宽度 */
+  margin: 8px; /* 减小间距 */
+}
+.lut-preview img {
+  height: 80px; /* 固定高度 */
+  width: 100%;
+  object-fit: cover;
+}
+
+.compare-wrapper {
+  /* 高度限制核心设置 */
+  max-height: 40vh; /* 最大高度为视口55% - 关键参数 */
+  min-height: 250px; /* 最小高度保障基础体验 */
+  
+  /* 滚动优化 */
+  overflow-y: auto; /* 仅垂直滚动 */
+  scrollbar-width: thin; /* Firefox 滚动条优化 */
+  scrollbar-color: #2d313a transparent; /* 深色滚动条 */
+  
+  /* 保留视觉样式 */
+  background: var(--surface-primary);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 1rem;
+  margin: 0.5rem 0; /* 减小垂直外边距 */
+  
+  /* 防止内部元素撑开容器 */
+  display: flex;
+  flex-direction: column;
+}
+
+/* 深色模式专属滚动条美化 (Chrome/Edge) */
+.compare-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+.compare-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+.compare-wrapper::-webkit-scrollbar-thumb {
+  background: #2d313a; /* 滚动条颜色 */
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+.compare-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #3a3f4a; /* 悬停加深 */
+}
+
+/* 响应式断点优化 */
+@media (max-height: 700px) {
+  .compare-wrapper {
+    max-height: 45vh; /* 小屏幕更紧凑 */
+  }
+}
+@media (max-height: 600px) {
+  .compare-wrapper {
+    max-height: 40vh;
+    min-height: 220px;
+  }
+}

@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ColorLake LUT Preview</title>
+    
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
+	
+	<script src="scripts/snowflakes.bundle.min.js"></script>
+	<style>
+      /* 临时样式，确保CSS加载前按钮可见 */
+      .snow-toggle-btn {
+        background: none;
+        border: none;
+        color: #ffffff;
+        font-size: 1.6rem;
+        cursor: pointer;
+        padding: 0 0.5rem;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        height: 40px;
+        margin-left: 1rem;
+        opacity: 0.8;
+      }
+      .snow-toggle-btn:hover {
+        opacity: 1;
+        transform: scale(1.1);
+        background: rgba(255, 255, 255, 0.1);
+      }
+    </style>
+    <script>
+      // 全局变量存储雪花实例和控制状态
+      let snowScene = null;
+      let snowEnabled = true;
+      let observer = null;
+      
+      // 初始化雪花效果
+      function initSnowEffect() {
+        snowScene = new SnowScene();
+        snowScene.play();
+        
+        // 确保body有初始类名
+        document.body.classList.add('snowing-enabled');
+      }
+      
+      // 切换雪花效果
+      function toggleSnowEffect() {
+        if (!snowScene) return;
+        
+        if (snowEnabled) {
+          // 暂停雪花效果
+          if (snowScene.pause) {
+            snowScene.pause();
+          } else if (snowScene.stop) {
+            snowScene.stop();
+          } else {
+            // 如果API不支持pause/stop，可以隐藏canvas
+            const canvas = document.querySelector('canvas');
+            if (canvas) canvas.style.display = 'none';
+          }
+          snowEnabled = false;
+          document.body.classList.remove('snowing-enabled');
+          updateSnowButtonState();
+        } else {
+          // 重新播放雪花效果
+          if (snowScene.play) {
+            snowScene.play();
+          } else if (snowScene.start) {
+            snowScene.start();
+          } else {
+            const canvas = document.querySelector('canvas');
+            if (canvas) canvas.style.display = 'block';
+          }
+          snowEnabled = true;
+          document.body.classList.add('snowing-enabled');
+          updateSnowButtonState();
+        }
+      }
+      
+      // 更新按钮状态
+      function updateSnowButtonState() {
+        const snowBtn = document.getElementById('snow-toggle-btn');
+        if (snowBtn) {
+          snowBtn.innerHTML = '❄️';
+          snowBtn.title = snowEnabled ? '点击关闭雪花效果' : '点击开启雪花效果';
+        }
+      }
+      
+      // 创建并插入雪花按钮
+      function createSnowButton() {
+        // 查找header h1元素
+        const headerH1 = document.querySelector('header h1');
+        if (!headerH1) {
+          console.log('未找到header h1元素');
+          return false;
+        }
+        
+        // 检查是否已存在按钮
+        const existingBtn = headerH1.querySelector('#snow-toggle-btn');
+        if (existingBtn) {
+          return true;
+        }
+        
+        // 创建雪花按钮
+        const snowButton = document.createElement('button');
+        snowButton.id = 'snow-toggle-btn';
+        snowButton.className = 'snow-toggle-btn';
+        snowButton.innerHTML = '❄️';
+        snowButton.setAttribute('aria-label', '切换雪花效果');
+        snowButton.setAttribute('title', '点击开启/关闭雪花效果');
+        
+        // 添加点击事件
+        snowButton.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleSnowEffect();
+        });
+        
+        // 将按钮添加到h1中
+        headerH1.appendChild(snowButton);
+        
+        // 确保h1是flex布局以正确显示按钮
+        headerH1.style.display = 'flex';
+        headerH1.style.alignItems = 'center';
+        headerH1.style.justifyContent = 'space-between';
+        
+        return true;
+      }
+      
+      // 使用MutationObserver监听DOM变化
+      function setupMutationObserver() {
+        // 先尝试创建一次
+        setTimeout(createSnowButton, 500);
+        
+        // 设置MutationObserver来监听DOM变化
+        observer = new MutationObserver(function(mutations) {
+          // 检查header h1是否存在
+          const headerH1 = document.querySelector('header h1');
+          if (headerH1) {
+            // 如果按钮不存在，创建它
+            const existingBtn = headerH1.querySelector('#snow-toggle-btn');
+            if (!existingBtn) {
+              createSnowButton();
+            }
+          }
+        });
+        
+        // 开始观察整个body的子树变化
+        observer.observe(document.body, {
+          childList: true,
+          subtree: true
+        });
+      }
+      
+      // 页面加载完成后初始化
+      document.addEventListener('DOMContentLoaded', function() {
+        initSnowEffect();
+        setupMutationObserver();
+        
+        // 也监听React应用可能完成加载的时间
+        setTimeout(function() {
+          createSnowButton();
+        }, 1500);
+      });
+      
+      // 页面卸载前清理
+      window.addEventListener('beforeunload', function() {
+        if (observer) {
+          observer.disconnect();
+        }
+      });
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
